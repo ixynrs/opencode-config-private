@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "@opencode-ai/plugin": "1.4.7",
+    "opencode-runtime-fallback": "^0.2.3",
+    "superpowers": "github:obra/superpowers"
+  }
+}

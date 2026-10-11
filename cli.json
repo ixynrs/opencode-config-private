@@ -1,0 +1,23 @@
+{
+  "$schema": "https://opencode.ai/v2/cli.json",
+  "theme": {
+    "name": "github"
+  },
+  "diffs": {
+    "wrap": "word"
+  },
+  "terminal": {
+    "title": true
+  },
+  "prompt": {
+    "editor": true,
+    "paste": "full",
+    "image_preview": true
+  },
+  "session": {
+    "sidebar": "hide",
+    "scrollbar": true,
+    "thinking": "hide"
+  },
+  "animations": false
+}

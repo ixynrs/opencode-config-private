@@ -1,0 +1,24 @@
+# deps - reinstall from package.json on each host
+node_modules/
+
+# secrets - never push live secret, use service.json.example instead
+service.json
+.env*
+*.local.*
+
+# logs - large local logs, never push
+*.log
+opencode-fallback.log
+
+# backups - local backup copies
+*.bak
+*.v1bak
+*.disabled
+*.backup
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# temp
+*.tmp
