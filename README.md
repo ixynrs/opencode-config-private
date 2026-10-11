@@ -23,19 +23,39 @@ Repo: `https://github.com/ixynrs/opencode-config-private`
 
 ## Install
 
-Paste once in WSL Ubuntu:
+Pick your OS. Paste one block.
+
+Ubuntu 22.04 or later, incl. WSL Ubuntu:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/ixynrs/opencode-config-private/main/install.sh | bash
 ```
 
-The script clones this repo to `~/.config/opencode`. It installs Node 22 and `uv`. It installs node deps. It installs Playwright Chromium libs. Re-run is safe.
+Mac on Apple Silicon. Intel Macs are out of scope:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ixynrs/opencode-config-private/main/install.sh | bash
+```
+
+Windows 11 in PowerShell 7:
+
+```powershell
+irm https://raw.githubusercontent.com/ixynrs/opencode-config-private/main/scripts/install-windows.ps1 | iex
+```
+
+The script clones this repo to your config dir. It installs Node 22 and `uv`. It installs node deps. It installs the Playwright Chromium browser. Re-run is safe.
 
 ## Verify
 
 ```bash
 opencode --version
 bash ~/.config/opencode/scripts/check.sh
+```
+
+On Windows use `check-windows.ps1` instead:
+
+```powershell
+pwsh -File ~/.config/opencode/scripts/check-windows.ps1
 ```
 
 Pass means two facts. Version prints. Check ends with `0 fail`.
@@ -54,6 +74,8 @@ The repo ships no live secret. See [Security](#security).
 | Item | Min version | Check |
 | --- | --- | --- |
 | Ubuntu | 22.04 | `lsb_release -a` |
+| macOS | Apple Silicon | `uname -m` shows `arm64` |
+| Windows | 11 plus pwsh 7 | `$PSVersionTable.PSVersion` |
 | git | any recent | `git --version` |
 | curl | any recent | `curl --version` |
 | Node | 22.x, auto-install | `node -v` |
@@ -63,6 +85,8 @@ The repo ships no live secret. See [Security](#security).
 The installer adds Node and uvx if absent. Other rows must pass first.
 
 ## Full Steps
+
+Ubuntu steps below. Mac matches except brew replaces apt. Windows matches except winget replaces apt. See per-OS scripts in `scripts/`.
 
 Use this path if you prefer to see each step.
 
@@ -125,6 +149,10 @@ cd ~/.config/opencode && git pull --rebase && bash scripts/check.sh
 | Playwright fails | See Fix 3 |
 | Permission denied | See Fix 4 |
 | Config drift | See Fix 5 |
+| `brew` absent on Mac | Install Xcode tools, then brew. See Mac script |
+| Intel Mac | Out of scope. Use Apple Silicon |
+| `winget` absent on Windows | Install App Installer from the Store |
+| Old PowerShell | Install PowerShell 7. Re-run in `pwsh` |
 
 Fix 1: refresh Node.
 
