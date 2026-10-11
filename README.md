@@ -1,10 +1,12 @@
-# Opencode Config Private
+# Opencode Config
 
 ## Goal
 
-You store portable Opencode config in this private repo.
+You store portable Opencode config in this repo.
 You restore the same config on Windows and WSL Ubuntu.
-You run one paste block in WSL for full setup.
+You run one command in WSL for full setup.
+
+Repo URL: `https://github.com/ixynrs/opencode-config-private`
 
 ## Map
 
@@ -16,30 +18,50 @@ You run one paste block in WSL for full setup.
 - `tools/`: helper scripts in TypeScript.
 - `docs/`: design notes.
 - `tests/`: contract tests.
-- `scripts/install.sh`: just-work install for WSL Ubuntu.
+- `install.sh`: public one-step installer. It clones the repo if absent, then calls `scripts/install.sh`.
+- `scripts/install.sh`: full setup for WSL Ubuntu.
 - `scripts/check.sh`: verify script for both OS.
 - `service.json.example`: secret template. Real `service.json` stays local.
+- `LICENSE`: MIT license text.
 
 Warning: `service.json` holds a live password. Never push it. Git ignores it by default.
 
-## TL;DR For Fresh WSL Ubuntu
+## One-Line Install For Fresh WSL Ubuntu
 
-Copy this block once. Paste it in WSL Ubuntu. Replace `YOUR_USER` once.
+Copy this block once. Paste it in WSL Ubuntu.
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ixynrs/opencode-config-private/main/install.sh | bash
+```
+
+What it does:
+
+- Clones this repo to `~/.config/opencode` if absent.
+- Updates the clone with `git pull` if present.
+- Installs Node 22 LTS if node is absent or old.
+- Installs `uv` for `uvx` if absent.
+- Installs node deps from `package.json`.
+- Installs Playwright Chromium OS libs.
+
+Then create your secret by hand (see Step 5). Then verify (see Step 6).
+
+## TL;DR With Manual Clone
+
+Use this path if you prefer to see each step. No placeholders. Values are final.
 
 ```bash
 # 0: Update base
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y git curl unzip ca-certificates
 
-# 1: Clone private config
+# 1: Clone config
 mkdir -p ~/.config
 test -d ~/.config/opencode && mv ~/.config/opencode ~/opencode-backup-$(date +%F-%H%M)
-git clone git@github.com:YOUR_USER/opencode-config-private.git ~/.config/opencode
+git clone https://github.com/ixynrs/opencode-config-private.git ~/.config/opencode
 cd ~/.config/opencode
 
-# 2: Run just-work install
-chmod +x scripts/install.sh scripts/check.sh
-bash scripts/install.sh
+# 2: Run installer
+bash install.sh
 
 # 3: Verify
 node -v
@@ -85,19 +107,13 @@ Copy and paste:
 mkdir -p ~/.config
 ls -la ~/.config/opencode || echo "no old config"
 test -d ~/.config/opencode && mv ~/.config/opencode ~/opencode-backup-$(date +%F-%H%M) || true
-git clone git@github.com:YOUR_USER/opencode-config-private.git ~/.config/opencode
+git clone https://github.com/ixynrs/opencode-config-private.git ~/.config/opencode
 ls -la ~/.config/opencode
 ```
 
-Check: `ls` shows `opencode.jsonc`, `agents/`, `skills/`, `scripts/`.
+Check: `ls` shows `opencode.jsonc`, `agents/`, `skills/`, `scripts/`, `install.sh`.
 
-If SSH fails, use HTTPS once, then switch to SSH:
-
-```bash
-git clone https://github.com/YOUR_USER/opencode-config-private.git ~/.config/opencode
-```
-
-Then add SSH key later and switch remote:
+For SSH fans, switch remote after clone:
 
 ```bash
 ssh-keygen -t ed25519 -C "wsl-ubuntu" -f ~/.ssh/id_ed25519 -N ""
@@ -105,7 +121,7 @@ cat ~/.ssh/id_ed25519.pub
 # Add output key in GitHub: Settings > SSH keys > New key
 ssh -T git@github.com
 cd ~/.config/opencode
-git remote set-url origin git@github.com:YOUR_USER/opencode-config-private.git
+git remote set-url origin git@github.com:ixynrs/opencode-config-private.git
 git pull
 ```
 
@@ -115,8 +131,7 @@ Copy and paste:
 
 ```bash
 cd ~/.config/opencode
-chmod +x scripts/install.sh scripts/check.sh
-bash scripts/install.sh
+bash install.sh
 ```
 
 What the script does:
@@ -140,7 +155,6 @@ ls -l ~/.config/opencode/service.json || echo "absent - this is normal on first 
 cat ~/.config/opencode/service.json.example
 nano ~/.config/opencode/service.json
 chmod 600 ~/.config/opencode/service.json
-cat ~/.config/opencode/service.json
 ```
 
 Paste password from vault into `nano`. Save. Exit.
@@ -162,7 +176,7 @@ Copy and paste:
 ```bash
 opencode --version
 bash ~/.config/opencode/scripts/check.sh
-cat ~/.config/opencode/opencode.jsonc | grep -c "C:/" || echo "0 Windows paths - good"
+grep -c "C:/" ~/.config/opencode/opencode.jsonc || echo "0 Windows paths - good"
 ```
 
 Expected result:
@@ -170,6 +184,20 @@ Expected result:
 - `opencode --version` prints a version.
 - `check.sh` ends with `0 fail`.
 - Windows path count is `0`.
+
+## Use Your Own Fork
+
+You can fork this repo and keep your own config in public or private.
+
+Steps:
+
+- Fork on GitHub. Keep the same file layout.
+- Edit `REPO_URL` at the top of your `install.sh`. Point it at your fork.
+- Edit `opencode.jsonc`, `agents/`, `skills/` to taste.
+- Never commit live secrets. Keep `service.json` ignored.
+- Update the one-line URL in this README to your raw `install.sh` path.
+
+Check: Fresh WSL run with your fork URL ends with `0 fail`.
 
 ## Daily Sync Between Windows And WSL
 
@@ -206,6 +234,8 @@ cat ~/.ssh/id_ed25519.pub
 
 Add key to GitHub. Retry `git pull`.
 
+HTTPS works with no key. Use the `https://` clone URL in that case.
+
 ### Fix 2: Node version old
 
 ```bash
@@ -234,8 +264,8 @@ npx -y @playwright/mcp --help | head -n 20
 ### Fix 5: Permission denied on script
 
 ```bash
-chmod +x ~/.config/opencode/scripts/*.sh
-bash ~/.config/opencode/scripts/install.sh
+chmod +x ~/.config/opencode/install.sh ~/.config/opencode/scripts/*.sh
+bash ~/.config/opencode/install.sh
 ```
 
 ### Fix 6: Config drift
@@ -250,8 +280,8 @@ bash scripts/check.sh
 ## Security Notes
 
 - Never commit `service.json`.
-- Store live password in a vault, not in chat or mail.
-- Rotate password if it ever leaves the vault.
+- Store live passwords in a vault, not in chat or mail.
+- Rotate a password if it ever leaves the vault.
 - Confirm no secret in git history:
 
 ```bash
@@ -261,7 +291,13 @@ git check-ignore -v service.json
 
 ## Windows Notes
 
-- Source path: `C:\Users\raffy\.config\opencode`.
+- Windows config path: `%USERPROFILE%\.config\opencode`.
 - This repo lives directly in that path after first push.
 - No symlink need on Windows. Use direct git repo.
 - Same `check.sh` runs in Git Bash, but use `opencode --version` in PowerShell for quick check.
+
+## License
+
+MIT. See `LICENSE` for full text.
+
+Copyright (c) 2026 ixynrs.
