@@ -2,10 +2,10 @@
 name: refactoring
 description: Plans and implements code refactoring with intelligent skill loading. Use when restructuring code, improving maintainability, or applying best practices without changing behavior.
 mode: all
-model: opencode-go/muse-spark-1.3-contributor
+model: opencode-go/deepseek-v4.1-flash
 
 fallback_models:
-  - opencode-go/muse-spark-1.3-contributor
+  - opencode-go/deepseek-v4.1-flash
 
 tools:
   read: true

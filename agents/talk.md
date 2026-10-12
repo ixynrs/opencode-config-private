@@ -4,7 +4,7 @@ mode: primary
 description:
   Discussion partner for exploring ideas and topics. Use when you want to talk
   through concepts, brainstorm, or have a focused conversation without code changes.
-model: opencode-go/muse-spark-1.3-contributor
+model: opencode-go/deepseek-v4.1-flash
 
 tools:
   webfetch: true

@@ -2,7 +2,7 @@
 name: code-simplifier
 description: Simplifies and refines code for clarity, consistency, and maintainability while preserving all functionality. Focuses on recently modified code unless instructed otherwise.
 mode: all
-model: opencode-go/muse-spark-1.3-contributor
+model: opencode-go/deepseek-v4.1-flash
 
 tools:
   edit: true

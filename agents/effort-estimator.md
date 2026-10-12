@@ -2,11 +2,11 @@
 name: effort-estimator
 description: Estimate development effort for tasks and features. Use when sizing work, planning sprints, breaking down large tasks, or comparing implementation approaches.
 mode: all
-model: opencode-go/muse-spark-1.3-contributor
+model: opencode-go/deepseek-v4.1-flash
 
 
 fallback_models:
-  - opencode-go/muse-spark-1.3-contributor
+  - opencode-go/deepseek-v4.1-flash
 
 tools:
   read: true
